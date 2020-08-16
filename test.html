@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
+    <script src="./bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <link rel="stylesheet" href="./style.css">
     <script>
         function chk() {
             let packageNumber = document.getElementById("packageNumber").value;
@@ -69,17 +69,50 @@
         <input type="submit" value="submit" onclick="return play()">
     </form>
     <p id="msg"></p> -->
-    <div class="container">
+    <!-- <div class="container">
         <form>
             <div class="form-group">
                 <label for="packageNumber">شماره بسته</label>
                 <input type="text" id="packageNumber" autofocus value="2000100" placeholder="شماره بسته">
             </div>
             <div class="form-group">
-                <input class="button white-button w-75 bg-dark border-0 color-pc" type="submit" value="submit" onclick="return chk()">
+                <input class="button white-button bg-dark border-0 color-pc" type="submit" value="submit" onclick="return chk()">
             </div>
         </form>
+        <p id="name"></p>
         <p id="msg"></p>
+    </div> -->
+    <style>
+        div.row{
+            border: 1px black dotted;
+        }
+        div.col-8{
+            border: 0.5px red solid;
+        }
+    </style>
+    <div class="container">
+        <form>
+            <div class="row justify-content-center">
+                <div class="col-8 col-sm-4 form-group">
+                    <label for="packageNumber">شماره بسته خود را وارد نمایید</label>
+                    <input type="text" name="packageNumber" id="packageNumber" autofocus value="2000100" placeholder="شماره بسته">
+                </div>
+            </div>
+            <div class="row  justify-content-center">
+                <div class="col-8 col-sm-4 form-group">
+                    <input type="submit" class="button bg-dark border-0 color-pc align-self-center" value="submit" onclick="return chk()">
+                </div>
+            </div>
+        </form>
+        <div class="row justify-content-center">
+            <div class="col-8 col-sm-4"></div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-8 col-sm-4"></div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-8 col-sm-4"></div>
+        </div>
     </div>
 </body>
 

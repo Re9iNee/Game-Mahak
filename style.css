@@ -12,7 +12,7 @@
   font-family: "yekan";
   font-style: normal;
   font-weight: normal;
-  src: url("../font/yekan.woff") format("woff"), url("../font/yekan.ttf") format("truetype"), url("../font/yekan.eot") format("eot");
+  src: url("./yekan.woff") format("woff"), url("./yekan.ttf") format("truetype");
 }
 
 .clear {
