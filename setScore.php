@@ -4,7 +4,7 @@ $data = array(
     'packageNo' => $_POST["packageNumber"],
     "GateWay" =>  "game",
     "comment" =>  "",
-    "UserId" => "3ad9c26f-712a-46ab-a6fc-9980b3a7fd34"
+    "UserId" => $_POST["userId"]
 );
 
 $payload = json_encode($data);
