@@ -119,7 +119,7 @@
         .modal-login .btn:active {
             color: #fff;
             border-radius: 4px;
-            background: #60c7c1 !important;
+            background: #ffcc00 !important;
             text-decoration: none;
             transition: all 0.4s;
             line-height: normal;
@@ -128,8 +128,12 @@
 
         .modal-login .btn:hover,
         .modal-login .btn:focus {
-            background: #45aba6 !important;
+            background: #ff9600 !important;
             outline: none;
+        }
+
+        #confirm:disabled {
+            background-color: #c6c6c6;
         }
 
         .trigger-btn {
@@ -138,53 +142,151 @@
         }
     </style>
     <script>
-        function validatePackageNumber() {
-            let packageNumber = document.getElementById("packageNumber").value;
+        var packageNumber, userId;
+
+        function setScore(e) {
             let dataString = 'packageNumber=' + packageNumber;
             $.ajax({
                 type: "post",
-                url: "searchCustomer.php",
+                url: "setScore.php",
                 data: dataString,
                 cache: false,
-                beforeSend: () => {
-                    $('#validatePackageNumberBtn').html(
-                        `... بررسی
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
-                    )
-                    $('#name').hide()
-                    $('#confirm').hide()
-                    $('#msg').hide()
-                },
-                error: (e) => {
-                    $('#msg').html(e)
-                    $('#confirm').hide()
-                    $('#validatePackageNumberBtn').html(
-                        `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
-                    )
-                    console.log("GOT AN ERROR")
-                },
+                beforeSend: () => {},
+                error: (e) => {},
                 success: (html) => {
-                    let result = JSON.parse(html)
+                    console.group("on SetScore Success Ajax: ");
+                    console.info(html)
+                    var result;
+                    try {
+                        result = JSON.parse(html)
+                    } catch (e) {
+                        console.error("error While parsing: ", e)
+                    }
                     if (result.result) {
-                        $('#validatePackageNumberBtn').html(
-                            `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
-                        )
-                        $('#name').show()
-                        $('#name').html(result.data.searchCustomerResultList[0].customerName)
-                        $('#msg').show()
-                        $('#msg').html('اولین بار شمـــــــا است')
-                        $('#confirm').show()
+                        window.alert("Redirecting to game")
+                        goTo("https://beginnersbook.com/2019/04/jquery-click-event/")
                     } else {
-                        $('#msg').html(result.message)
-                        $('#msg').show()
+                        if (result.message) {
+                            $('#msg').html("API SentScore Message: ", result.message)
+                        } else {
+                            $('#msg').html("API RESPONDED WITH: ", html)
+                            console.error("Got An error while submitting Score: ", html)
+                        }
+                    }
+                }
+            })
+            return false;
+        }
+
+        function goTo(url) {
+            document.location.href = url
+        }
+
+        function validatePackageNumber() {
+            packageNumber = document.getElementById("packageNumber").value;
+            let dataString = 'packageNumber=' + packageNumber;
+            if (packageNumber) {
+                jQuery("#msg").html()
+                //Search Customer
+                $.ajax({
+                    type: "post",
+                    url: "searchCustomer.php",
+                    data: dataString,
+                    cache: false,
+                    beforeSend: () => {
+                        $('#validatePackageNumberBtn').html(
+                            `... بررسی
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
+                        )
+                        $('#name').hide()
+                        $('#confirm').hide()
+                        $('#msg').hide()
+                    },
+                    error: (e) => {
+                        $('#msg').html(e)
                         $('#confirm').hide()
                         $('#validatePackageNumberBtn').html(
                             `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
                         )
+                        console.error("GOT AN ERROR", e)
+                    },
+                    success: (html) => {
+                        var result;
+                        try {
+                            result = JSON.parse(html)
+                        } catch (e) {
+                            console.error("error While parsing: ", e)
+                        }
+                        if (result.result) {
+                            $('#validatePackageNumberBtn').html(
+                                `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
+                            )
+                            $('#name').show()
+                            $('#name').html(result.data.searchCustomerResultList[0].customerName)
+                            $('#confirm').show()
+                            userId = result.data.searchCustomerResultList[0].userId;
+                            //Check Allow
+                            $.ajax({
+                                type: "post",
+                                url: "checkAllow.php",
+                                data: dataString,
+                                cache: false,
+                                beforeSend: () => {
+                                    jQuery('#msg').hide()
+                                },
+                                error: (e) => {
+                                    jQuery('#msg').show()
+                                },
+                                success: (html) => {
+                                    jQuery("#msg").show()
+                                    console.group("on check Allow Success Ajax: ");
+                                    console.info(html)
+                                    var result;
+                                    try {
+                                        result = JSON.parse(html)
+                                    } catch (e) {
+                                        console.error("error While parsing: ", e)
+                                    }
+                                    if (result.result) {
+                                        $('#msg').html("Sucess: Play");
+                                        var confirmBtn = jQuery('#confirm')[0];
+                                        confirmBtn.onclick = () => setScore();
+                                        confirmBtn.disabled = false;
+                                    } else {
+                                        if (result.message) {
+                                            $('#msg').html("API RESPOND WITH: ", html)
+                                        } else {
+                                            jQuery('#msg').html("You've Already Played")
+                                            var confirmBtn = jQuery('#confirm')[0];
+                                            confirmBtn.disabled = false;
+                                            confirmBtn.onclick = () => goTo(
+                                                "https://www.mahaksoft.com/پشتیبانی/");
+                                        }
+                                    }
+                                }
+                            })
+                        } else {
+                            $('#msg').html(result.message)
+                            $('#msg').show()
+                            $('#confirm').hide()
+                            $('#validatePackageNumberBtn').html(
+                                `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
+                            )
+                        }
                     }
-                }
-            })
+                })
+            } else {
+                jQuery("#msg").html("شماره بسته خود را وارد نمایید")
+            }
             return false
+        }
+        function preventLetters(event) {
+            if (/\d/.test(event.key)) {} else if (event.ctrlKey || event.metaKey || event.key === "Enter" || event
+                .key === "Tab" || event.key === "Backspace" || event.key === "Shift" || event.key === "ArrowLeft" ||
+                event.key === "ArrowRight" || event.key === "ArrowUp" || event.key === "ArrowDown" || event.key ===
+                "Alt") {} else {
+                event.preventDefault();
+            }
         }
     </script>
 </head>
@@ -206,8 +308,9 @@
                     <form>
                         <div class="form-group">
                             <label for="packageNumber">شماره بسته خود را وارد نمایید</label>
-                            <input type="text" class="form-control" id="packageNumber" name="packageNumber"
-                                placeholder="شماره بسته" required="required" autofocus>
+                            <input type="text" class="form-control" id="packageNumber" onkeydown="preventLetters(event)"
+                                minlength="1" maxlength="7" name="packageNumber" placeholder="شماره بسته" required
+                                autofocus>
                         </div>
                         <div class="form-group">
                             <button type="submit" tabindex="2" id="validatePackageNumberBtn"
@@ -222,12 +325,10 @@
                     <p id="name">
                     </p>
                     <p id="msg"></p>
-                    <form>
-                        <div class="form-group">
-                            <button type="submit" id="confirm" style="display: none;" tabindex="2"
-                                class="btn btn-primary btn-lg btn-block login-btn">تایید و بازی</button>
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <button id="confirm" style="display: none;" class="btn btn-primary btn-lg btn-block login-btn"
+                            disabled>تایید و بازی</button>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a href="https://www.mahaksoft.com/" target="_blank">کمک لازم دارید؟</a>
