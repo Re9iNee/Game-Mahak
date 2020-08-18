@@ -145,8 +145,8 @@
         var packageNumber, userId;
 
         function setScore(e) {
-            let dataString = 'packageNumber=' + packageNumber;
-            $.ajax({
+            var dataString = 'packageNumber=' + packageNumber;
+            jQuery.ajax({
                 type: "post",
                 url: "setScore.php",
                 data: dataString,
@@ -167,9 +167,9 @@
                         goTo("https://beginnersbook.com/2019/04/jquery-click-event/")
                     } else {
                         if (result.message) {
-                            $('#msg').html("API SentScore Message: ", result.message)
+                            jQuery('#msg').html("API SentScore Message: ", result.message)
                         } else {
-                            $('#msg').html("API RESPONDED WITH: ", html)
+                            jQuery('#msg').html("API RESPONDED WITH: ", html)
                             console.error("Got An error while submitting Score: ", html)
                         }
                     }
@@ -184,28 +184,28 @@
 
         function validatePackageNumber() {
             packageNumber = document.getElementById("packageNumber").value;
-            let dataString = 'packageNumber=' + packageNumber;
+            var dataString = 'packageNumber=' + packageNumber;
             if (packageNumber) {
                 jQuery("#msg").html()
                 //Search Customer
-                $.ajax({
+                jQuery.ajax({
                     type: "post",
                     url: "searchCustomer.php",
                     data: dataString,
                     cache: false,
                     beforeSend: () => {
-                        $('#validatePackageNumberBtn').html(
+                        jQuery('#validatePackageNumberBtn').html(
                             `... بررسی
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
                         )
-                        $('#name').hide()
-                        $('#confirm').hide()
-                        $('#msg').hide()
+                        jQuery('#name').hide()
+                        jQuery('#confirm').hide()
+                        jQuery('#msg').hide()
                     },
                     error: (e) => {
-                        $('#msg').html(e)
-                        $('#confirm').hide()
-                        $('#validatePackageNumberBtn').html(
+                        jQuery('#msg').html(e)
+                        jQuery('#confirm').hide()
+                        jQuery('#validatePackageNumberBtn').html(
                             `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
                         )
                         console.error("GOT AN ERROR", e)
@@ -218,15 +218,15 @@
                             console.error("error While parsing: ", e)
                         }
                         if (result.result) {
-                            $('#validatePackageNumberBtn').html(
+                            jQuery('#validatePackageNumberBtn').html(
                                 `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
                             )
-                            $('#name').show()
-                            $('#name').html(result.data.searchCustomerResultList[0].customerName)
-                            $('#confirm').show()
+                            jQuery('#name').show()
+                            jQuery('#name').html(result.data.searchCustomerResultList[0].customerName)
+                            jQuery('#confirm').show()
                             userId = result.data.searchCustomerResultList[0].userId;
                             //Check Allow
-                            $.ajax({
+                            jQuery.ajax({
                                 type: "post",
                                 url: "checkAllow.php",
                                 data: dataString,
@@ -248,13 +248,13 @@
                                         console.error("error While parsing: ", e)
                                     }
                                     if (result.result) {
-                                        $('#msg').html("Sucess: Play");
+                                        jQuery('#msg').html("Sucess: Play");
                                         var confirmBtn = jQuery('#confirm')[0];
                                         confirmBtn.onclick = () => setScore();
                                         confirmBtn.disabled = false;
                                     } else {
                                         if (result.message) {
-                                            $('#msg').html("API RESPOND WITH: ", html)
+                                            jQuery('#msg').html("API RESPOND WITH: ", html)
                                         } else {
                                             jQuery('#msg').html("You've Already Played")
                                             var confirmBtn = jQuery('#confirm')[0];
@@ -266,10 +266,10 @@
                                 }
                             })
                         } else {
-                            $('#msg').html(result.message)
-                            $('#msg').show()
-                            $('#confirm').hide()
-                            $('#validatePackageNumberBtn').html(
+                            jQuery('#msg').html(result.message)
+                            jQuery('#msg').show()
+                            jQuery('#confirm').hide()
+                            jQuery('#validatePackageNumberBtn').html(
                                 `بررسی <span class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true" id="validatePackageNumberLoading"></span>`
                             )
                         }
